@@ -43,7 +43,6 @@ public class Movie {
     private Set<String> movieCast;
 
     @Column(nullable = false)
-    @NotBlank(message = "ReleaseYear is required")
     private Integer releaseYear;
 
     @Column(nullable = false)
