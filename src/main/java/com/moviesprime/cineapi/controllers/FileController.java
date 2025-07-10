@@ -38,7 +38,7 @@ public class FileController {
         // This method handles file upload requests.
         // It uses the FileService to upload the file and returns a response with the file name.
         String uploadedFileName = fileService.uplaodFile(path, file);
-        return ResponseEntity.ok("File uploaed" +uploadedFileName);
+        return ResponseEntity.ok("File uploaed : " +uploadedFileName);
     }
 
     @GetMapping("/{fileName}")

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MovieDto {
     
-    private Integer id;
+    private Integer movieId;
 
     @NotBlank(message = "Title is required")
     private String title;
