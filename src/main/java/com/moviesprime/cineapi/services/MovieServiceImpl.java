@@ -1,6 +1,7 @@
 package com.moviesprime.cineapi.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -63,14 +64,47 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public MovieDto getMovie(Integer movieId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMovie'");
+        //Check if the data in DB and if exits , fetch the data of the given id
+        Movie movie=movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Movie not found with id: " + movieId));
+        //Generate the poster URL
+        String posterUrl = baseUrl + "/file/" + movie.getPoster(); // Adjust the URL as needed
+        //Map the Movie entity to MovieDto and return it
+         MovieDto response = new MovieDto(
+            movie.getId(),
+            movie.getTitle(),
+            movie.getDirector(),
+            movie.getStudio(),
+            movie.getMovieCast(),
+            movie.getReleaseYear(),
+            movie.getPoster(),
+            posterUrl
+        );
+        return response;
     }
 
     @Override
     public List<MovieDto> getAllMovies() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllMovies'");
+        //To fetch all the movies from the database
+        List<Movie> movies = movieRepository.findAll();
+
+        List<MovieDto> moviesDto = new ArrayList<>();
+        //Interate through the list, generate posterUrl for each movie obj,
+        //Map to MovieDto and return the list
+        for(Movie movie : movies){
+            String posterUrl = baseUrl + "/file/" + movie.getPoster();
+            MovieDto response = new MovieDto(
+            movie.getId(),
+            movie.getTitle(),
+            movie.getDirector(),
+            movie.getStudio(),
+            movie.getMovieCast(),
+            movie.getReleaseYear(),
+            movie.getPoster(),
+            posterUrl
+         );
+            moviesDto.add(response);
+        }
+        return moviesDto;
     }
     
 

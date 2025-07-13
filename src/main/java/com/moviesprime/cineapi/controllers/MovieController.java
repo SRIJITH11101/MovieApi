@@ -1,9 +1,12 @@
 package com.moviesprime.cineapi.controllers;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -32,6 +35,20 @@ public class MovieController {
         
     }
 
+    @GetMapping("/{movieId}")
+    public ResponseEntity<MovieDto> getMovieHandler(@PathVariable Integer movieId) {
+        MovieDto movie = movieService.getMovie(movieId);
+        return new ResponseEntity<>(movie, HttpStatus.OK);
+    }
+
+    @GetMapping("/all-movies")
+    public ResponseEntity<List<MovieDto>> getAllMoviesHandler() {
+        List<MovieDto> movies = movieService.getAllMovies();
+        return new ResponseEntity<>(movies, HttpStatus.OK);
+    }
+
+
+
     private MovieDto convertToMovieDto(String MovieDtoObj) throws JsonMappingException, JsonProcessingException{
         // This method converts a JSON string representation of a MovieDto object into a MovieDto instance.
         ObjectMapper objectMapper = new ObjectMapper();
@@ -39,5 +56,7 @@ public class MovieController {
         return objectMapper.readValue(MovieDtoObj, MovieDto.class);
        
     }
+
+
 }
 
