@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moviesprime.cineapi.dto.MovieDto;
+import com.moviesprime.cineapi.exceptions.EmptyFileException;
 import com.moviesprime.cineapi.services.MovieService;
 
 @RestController
@@ -32,6 +33,9 @@ public class MovieController {
 
     @PostMapping("/add-movie")
     public ResponseEntity<MovieDto> addMovieHandler(@RequestPart MultipartFile file, @RequestPart String movieDto) throws IOException{
+        if(file.isEmpty()) {
+            throw new EmptyFileException("File cannot be empty. Please provide a valid file.");
+        }
         MovieDto dto = convertToMovieDto(movieDto);
         return new ResponseEntity<>(movieService.addMovie(dto, file), HttpStatus.CREATED);
         
