@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,8 +20,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moviesprime.cineapi.dto.MovieDto;
+import com.moviesprime.cineapi.dto.MoviePageResponse;
 import com.moviesprime.cineapi.exceptions.EmptyFileException;
 import com.moviesprime.cineapi.services.MovieService;
+import com.moviesprime.cineapi.utils.AppConstants;
 
 @RestController
 @RequestMapping("/api/v1/movie")
@@ -69,7 +72,24 @@ public class MovieController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/allMoviesPage")
+    public ResponseEntity<MoviePageResponse> getAllMoviesWithPaginationHandler(
+        @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER,required = false) Integer pageNumber, 
+    @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE , required = false
+    ) Integer pageSize) {
+        MoviePageResponse moviePageResponse = movieService.getAllMoviesWithPagination(pageNumber, pageSize);
+        return new ResponseEntity<>(moviePageResponse, HttpStatus.OK);
+    }
 
+    @GetMapping("/allMoviesPageSort")
+    public ResponseEntity<MoviePageResponse> getAllMoviesWithPaginationAndSortingtHandler(
+        @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER,required = false) Integer pageNumber, 
+    @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE , required = false) Integer pageSize , 
+    @RequestParam(defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+    @RequestParam(defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String dir) {
+        MoviePageResponse moviePageResponse = movieService.getAllMoviesWithPaginationAndSorting(pageNumber, pageSize,sortBy,dir);
+        return new ResponseEntity<>(moviePageResponse, HttpStatus.OK);
+    }
 
 
 

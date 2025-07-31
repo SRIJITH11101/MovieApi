@@ -8,10 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.moviesprime.cineapi.dto.MovieDto;
+import com.moviesprime.cineapi.dto.MoviePageResponse;
 import com.moviesprime.cineapi.entities.Movie;
 import com.moviesprime.cineapi.exceptions.FileExistException;
 import com.moviesprime.cineapi.exceptions.MovieNotFoundException;
@@ -178,6 +183,77 @@ public class MovieServiceImpl implements MovieService{
         movieRepository.delete(mv);
 
         return "Movie with id " + id + " deleted successfully.";
+    }
+
+    @Override
+    public MoviePageResponse getAllMoviesWithPagination(Integer pageNumber, Integer pageSize) {
+        
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Page<Movie> moviePages = movieRepository.findAll(pageable);
+        
+        List<Movie> movies = moviePages.getContent();
+
+        List<MovieDto> moviesDto = new ArrayList<>();
+        for(Movie movie : movies){
+            String posterUrl = baseUrl + "/file/" + movie.getPoster();
+            MovieDto response = new MovieDto(
+            movie.getId(),
+            movie.getTitle(),
+            movie.getDirector(),
+            movie.getStudio(),
+            movie.getMovieCast(),
+            movie.getReleaseYear(),
+            movie.getPoster(),
+            posterUrl
+         );
+            moviesDto.add(response);
+        }
+        return new MoviePageResponse(
+            moviesDto,
+            pageNumber,
+            pageSize,
+            (int) moviePages.getTotalElements(),
+            moviePages.getTotalPages(),
+            moviePages.isLast()
+        );
+    }
+
+    @Override
+    public MoviePageResponse getAllMoviesWithPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy,
+            String dir) {
+        
+            Sort sort = dir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+            Page<Movie> moviePages = movieRepository.findAll(pageable);
+            
+            List<Movie> movies = moviePages.getContent();
+
+            List<MovieDto> moviesDto = new ArrayList<>();
+            for(Movie movie : movies){
+                String posterUrl = baseUrl + "/file/" + movie.getPoster();
+                MovieDto response = new MovieDto(
+                movie.getId(),
+                movie.getTitle(),
+                movie.getDirector(),
+                movie.getStudio(),
+                movie.getMovieCast(),
+                movie.getReleaseYear(),
+                movie.getPoster(),
+                posterUrl
+            );
+                moviesDto.add(response);
+            }
+            return new MoviePageResponse(
+                moviesDto,
+                pageNumber,
+                pageSize,
+                (int) moviePages.getTotalElements(),
+                moviePages.getTotalPages(),
+                moviePages.isLast()
+            );
     }
     
 
