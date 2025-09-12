@@ -16,14 +16,17 @@ import com.moviesprime.cineapi.auth.repositories.UserRepository;
 @Configuration
 public class AppConfig {
 
+    private final AuthenticationProvider authenticationProvider;
+
     public final UserRepository userRepository;
-    public AppConfig(UserRepository userRepository) {
+    public AppConfig(UserRepository userRepository, AuthenticationProvider authenticationProvider) {
         this.userRepository = userRepository;
+        this.authenticationProvider = authenticationProvider;
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsername(username)
+        return username -> userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email "+username));
     }
 
@@ -31,6 +34,7 @@ public class AppConfig {
     public AuthenticationProvider authenticationProvider() {
 
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService());
+       authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
