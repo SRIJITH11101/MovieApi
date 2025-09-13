@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,6 +29,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 public class User implements UserDetails{
 
     @Id
@@ -57,11 +59,6 @@ public class User implements UserDetails{
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    private boolean isAccountNonExpired = true;
-    private boolean isAccountNonLocked = true;
-    private boolean isCredentialsNonExpired = true;
-    private boolean isEnabled = true;
-
 
     @Override
     public String getPassword() {
@@ -72,7 +69,7 @@ public class User implements UserDetails{
     @Override
     public String getUsername() {
         // TODO Auto-generated method stub
-        return null;
+        return email;
     }
 
     @Override
@@ -82,22 +79,22 @@ public class User implements UserDetails{
     @Override
     public boolean isAccountNonExpired() {
         // TODO Auto-generated method stub
-        return isAccountNonExpired;
+        return true;
     }
     @Override
     public boolean isAccountNonLocked() {
         // TODO Auto-generated method stub
-        return isAccountNonLocked;
+        return true;
     }
     @Override
     public boolean isCredentialsNonExpired() {
         // TODO Auto-generated method stub
-        return isCredentialsNonExpired;
+        return true;
     }
     @Override
     public boolean isEnabled() {
         // TODO Auto-generated method stub
-        return isEnabled;
+        return true;
     }
 
 

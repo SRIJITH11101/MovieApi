@@ -1,9 +1,11 @@
 package com.moviesprime.cineapi.auth.services;
 
-import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    public static final String SECRET_KEY = "dGhlc2VzaGVldGF0YnJvdGhlcmV2ZW50c3RvY2tmdXJ0aGVyd2VhdGhlcmV2ZW50dWE=";
+    public static final String SECRET_KEY = "cm91Z2h3YW50Z3JlYXRlcmhpZ2hlc3RwcmltaXRpdmVkaXJlY3RseWxhZHlmaWVyY2U=";
 
 
     public String extractUsername(String token){
@@ -31,16 +33,20 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts
-                .parser()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
+                .parser()                     // returns JwtParserBuilder
+                .verifyWith(getSignInKey())   // new style instead of setSigningKey()
+                .build()                      // build the parser
+                .parseSignedClaims(token)     // parse JWT
+                .getPayload(); 
+        }
 
-    private Key getSignInKey(){
+    private SecretKey getSignInKey(){
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String generateToken(UserDetails userDetails){
+        return generateToken(new HashMap<>(), userDetails);
     }
 
     public String generateToken(Map<String,Object> extratClaims, UserDetails userDetails){
@@ -50,7 +56,7 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 2000 * 60 * 24))
-                .signWith(getSignInKey())
+                .signWith(getSignInKey(), io.jsonwebtoken.SignatureAlgorithm.HS256)
                 .compact();
     }
 

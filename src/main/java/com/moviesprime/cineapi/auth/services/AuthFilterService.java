@@ -36,7 +36,7 @@ public class AuthFilterService extends OncePerRequestFilter{
         String jwt;
         String username;
 
-        if(authHeader == null || authHeader.startsWith("Bearer ")){
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;
         }
@@ -48,7 +48,7 @@ public class AuthFilterService extends OncePerRequestFilter{
         username = jwtService.extractUsername(jwt);
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            if(jwtService.isTokenValid(username, userDetails)){
+            if(jwtService.isTokenValid(jwt, userDetails)){
                 // Set the authentication in the security context
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails,null,userDetails.getAuthorities());

@@ -22,7 +22,7 @@ public class RefreshTokenService {
     }
 
 
-    public RefreshToken creatRefreshToken(String username){
+    public RefreshToken createRefreshToken(String username){
         User user = userRepository.findByEmail(username)
             .orElseThrow(()-> new UsernameNotFoundException("User not found"));
         

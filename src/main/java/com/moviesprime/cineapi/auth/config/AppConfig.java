@@ -16,12 +16,10 @@ import com.moviesprime.cineapi.auth.repositories.UserRepository;
 @Configuration
 public class AppConfig {
 
-    private final AuthenticationProvider authenticationProvider;
-
     public final UserRepository userRepository;
-    public AppConfig(UserRepository userRepository, AuthenticationProvider authenticationProvider) {
+    public AppConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.authenticationProvider = authenticationProvider;
+        
     }
 
     @Bean
